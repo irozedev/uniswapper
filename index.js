@@ -18,7 +18,7 @@ const swapRouterAddress = process.env.SWAP_ROUTER_ADDRESS;
 const alfaFeedAddress = process.env.ALFA_FEED_ADDRESS;
 const wethAddress = process.env.WETH_ADDRESS;
 
-const swapRouterABI = require('./api.json').abi;
+const swapRouterABI = require('./abi.json').abi;
 
 const erc20ABI = [
     "function approve(address spender, uint256 amount) external returns (bool)"
