@@ -4,7 +4,7 @@ console.log(process.env.RPC_URL);
 const { ethers } = require('ethers');
 const fs = require('fs');
 
-const url = process.env.RPC_URL; // Загрузка URL из .env
+const url = process.env.RPC_URL; // Load URL from .env
 console.log(url, 'url');
 
 const provider = new ethers.providers.JsonRpcProvider(url);
@@ -13,7 +13,7 @@ const wallet = new ethers.Wallet(privateKey, provider);
 
 console.log(provider, 'provider');
 
-// Адреса и ABI
+// Addresses and ABI
 const swapRouterAddress = process.env.SWAP_ROUTER_ADDRESS;
 const alfaFeedAddress = process.env.ALFA_FEED_ADDRESS;
 const wethAddress = process.env.WETH_ADDRESS;
@@ -29,7 +29,7 @@ const alfaFeedToken = new ethers.Contract(alfaFeedAddress, erc20ABI, wallet);
 
 async function swapETHForAlfaFeed(amountETH, amountOutMin) {
     try {
-        // Оценка газа
+        // Gas estimation
         const estimatedGas = await swapRouter.estimateGas.swapExactETHForTokens(
             ethers.utils.parseUnits(amountOutMin, 'ether'),
             [wethAddress, alfaFeedAddress],
@@ -38,7 +38,7 @@ async function swapETHForAlfaFeed(amountETH, amountOutMin) {
             { value: ethers.utils.parseEther(amountETH) }
         );
 
-        console.log(`Оценочный газ: ${estimatedGas.toString()}`);
+        console.log(`Estimated gas: ${estimatedGas.toString()}`);
 
         const tx = await swapRouter.swapExactETHForTokens(
             ethers.utils.parseUnits(amountOutMin, 'ether'),
@@ -47,14 +47,14 @@ async function swapETHForAlfaFeed(amountETH, amountOutMin) {
             Math.floor(Date.now() / 1000) + 60 * 20,
             {
                 value: ethers.utils.parseEther(amountETH),
-                gasLimit: estimatedGas.mul(120).div(100) // Добавляем 20% к оценке газа для запаса
+                gasLimit: estimatedGas.mul(120).div(100) // Add 20% to the gas estimate for buffer
             }
         );
 
         console.log(`Swap ETH -> AlfaFeed, tx hash: ${tx.hash}`);
         await tx.wait();
     } catch (error) {
-        console.error(`Ошибка при свопе ETH на AlfaFeed: ${error.message}`);
+        console.error(`Error swapping ETH for AlfaFeed: ${error.message}`);
     }
 }
 
@@ -66,17 +66,17 @@ async function swapAlfaFeedForETH(amountTokens, amountOutMinETH) {
     console.log(`Approval tx hash: ${approveTx.hash}`);
 
     const tx = await swapRouter.swapExactTokensForETH(
-        ethers.utils.parseUnits(amountTokens, 'ether'), // Количество токенов для свопа
-        ethers.utils.parseUnits(amountOutMinETH, 'ether'), // Минимальное количество ETH для получения
-        [alfaFeedAddress, wethAddress], // Путь свопа
-        wallet.address, // Адрес получателя
+        ethers.utils.parseUnits(amountTokens, 'ether'), // Amount of tokens to swap
+        ethers.utils.parseUnits(amountOutMinETH, 'ether'), // Minimum amount of ETH to receive
+        [alfaFeedAddress, wethAddress], // Swap path
+        wallet.address, // Recipient address
         Math.floor(Date.now() / 1000) + 60 * 20 // Deadline
     );
     console.log(`Swap AlfaFeed -> ETH, tx hash: ${tx.hash}`);
     await tx.wait();
 }
 
-// Вызов функций (пример)
+// Function calls (example)
 swapETHForAlfaFeed('0.004', '0.0001').catch(console.error);
 
-// swapAlfaFeedForETH('10', '0.0001);
+// swapAlfaFeedForETH('10', '0.0001');
