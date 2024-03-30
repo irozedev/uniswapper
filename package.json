@@ -1,0 +1,19 @@
+{
+  "name": "swap-in-uniswap-base",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "r o z e",
+  "license": "ISC",
+  "dependencies": {
+    "dotenv": "^16.4.5",
+    "ethers": "^5.7.2",
+    "web3": "^4.7.0"
+  },
+  "devDependencies": {
+    "@uniswap/v3-periphery": "^1.4.4"
+  }
+}
